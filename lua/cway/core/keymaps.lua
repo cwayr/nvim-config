@@ -25,20 +25,13 @@ keymap.set("n", "<leader>sn", "<C-w>w", { desc = "Go to next split" }) -- go to 
 -- window size
 keymap.set("n", "<leader>si", ":vertical resize +20<CR>", { desc = "Increase window width" })
 keymap.set("n", "<leader>sd", ":vertical resize -20<CR>", { desc = "Decrease window width" })
-keymap.set("t", "<leader>si", "<C-\\><C-n>:vertical resize +20<CR>", { desc = "Increase window width" })
-keymap.set("t", "<leader>sd", "<C-\\><C-n>:vertical resize -20<CR>", { desc = "Decrease window width" })
 keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("t", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
 
 -- file explorer
 keymap.set("n", "<leader>ot", ":term<CR> | i", { desc = "Go to file explorer" }) -- go to file explorer
-keymap.set("n", "<leader>oe", ":Explore<CR>", { desc = "Go to file explorer" }) -- go to file explorer
-keymap.set("t", "<leader>oe", "<C-\\><C-n>:Explore<CR>", { desc = "Open file explorer (terminal)" }) -- go to file explorer
 
 -- terminal
 keymap.set("n", "<leader>st", ":vsp | terminal<CR> | :vertical resize 60<CR> | i", { desc = "Open terminal" }) -- open terminal
-keymap.set("t", "<leader>sn", "<C-\\><C-n><C-w>w", { desc = "Go to next split (terminal)" }) -- go to next split (terminal)
-keymap.set("t", "<leader>sx", "<cmd>close<CR>", { desc = "Close current split (terminal)" }) -- close current split (terminal)
 
 -- tab management
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- open new tab
@@ -48,3 +41,17 @@ keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) 
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
 keymap.set("n", ":vb", "<C-v>", { desc = "Enter visual block mode" }) -- visual block mode
+
+-- makes it so that page jumps are centered
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
+-- adds yanked command to the system clipboard
+vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+vim.keymap.set("n", "<leader>Y", [["+Y]])
+
+-- makes it so that search results are centered
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+
+vim.keymap.set("n", "<leader>p", "\"_dP")
