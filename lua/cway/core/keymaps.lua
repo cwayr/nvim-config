@@ -3,7 +3,7 @@ vim.g.mapleader = " "
 
 local keymap = vim.keymap -- for conciseness
 
-------------------- General Keymaps -------------------
+------------------- General -------------------
 
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>")
@@ -14,31 +14,6 @@ keymap.set("n", "<leader>nh", ":nohl<CR>")
 
 -- delete single character without copying into register
 keymap.set("n", "x", '"_x')
-
--- window management
-keymap.set("n", "<leader>sv", "<C-w>v") -- split window vertically
-keymap.set("n", "<leader>sh", "<C-w>s") -- split window horizontally
-keymap.set("n", "<leader>so", "<cmd>only<CR>") -- close all splits except current
-keymap.set("n", "<leader>sx", "<cmd>close<CR>") -- close current split window
-keymap.set("n", "<leader>sn", "<C-w>w") -- go to next split
-
--- window size
-keymap.set("n", "<leader>si", ":vertical resize +20<CR>")
-keymap.set("n", "<leader>sd", ":vertical resize -20<CR>")
-keymap.set("n", "<leader>se", "<C-w>=") -- make split windows equal width & height
-
--- file explorer
-keymap.set("n", "<leader>ot", ":term<CR> | i") -- go to file explorer
-
--- terminal
-keymap.set("n", "<leader>st", ":vsp | terminal<CR> | :vertical resize 60<CR> | i") -- open terminal
-
--- tab management
-keymap.set("n", "<leader>to", "<cmd>tabnew<CR>") -- open new tab
-keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>") -- close current tab
-keymap.set("n", "<leader>tn", "<cmd>tabn<CR>") --  go to next tab
-keymap.set("n", "<leader>tp", "<cmd>tabp<CR>") --  go to previous tab
-keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>") --  move current buffer to new tab
 
 keymap.set("n", ":vb", "<C-v>") -- visual block mode
 
@@ -54,9 +29,10 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+-- delete text without overwriting copy buffer
 vim.keymap.set("n", "<leader>p", "\"_dP")
 
--- easy code folding
+-- code folding
 vim.keymap.set("n", "<leader>z", function()
     if vim.fn.foldclosed('.') ~= -1 then
         vim.cmd('normal! zv')
@@ -75,7 +51,61 @@ vim.keymap.set("n", "<C-y>", "<C-y>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+------------------- Windows -------------------
 
+-- window management
+keymap.set("n", "<leader>sv", "<C-w>v") -- split window vertically
+keymap.set("n", "<leader>sh", "<C-w>s") -- split window horizontally
+keymap.set("n", "<leader>so", "<cmd>only<CR>") -- close all splits except current
+keymap.set("n", "<leader>sx", "<cmd>close<CR>") -- close current split window
+keymap.set("n", "<leader>sn", "<C-w>w") -- go to next split
 
+-- window size
+keymap.set("n", "<leader>si", ":vertical resize +20<CR>")
+keymap.set("n", "<leader>sd", ":vertical resize -20<CR>")
+keymap.set("n", "<leader>se", "<C-w>=") -- make split windows equal width & height
 
+-- tab management
+keymap.set("n", "<leader>to", "<cmd>tabnew<CR>") -- open new tab
+keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>") -- close current tab
+keymap.set("n", "<leader>tn", "<cmd>tabn<CR>") --  go to next tab
+keymap.set("n", "<leader>tp", "<cmd>tabp<CR>") --  go to previous tab
+keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>") --  move current buffer to new tab
 
+------------------- Terminal -------------------
+
+_G.open_or_switch_to_terminal = function()
+    -- Check if a terminal buffer exists
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
+        if vim.bo[buf].buftype == 'terminal' then
+            -- Switch to the existing terminal buffer
+            for _, win in pairs(vim.api.nvim_list_wins()) do
+                if vim.api.nvim_win_get_buf(win) == buf then
+                    vim.api.nvim_set_current_win(win)
+                    return
+                end
+            end
+            vim.api.nvim_set_current_buf(buf)
+            return
+        end
+    end
+
+    -- If no terminal buffer found, create a new one
+    vim.cmd('terminal')
+    vim.cmd('startinsert')
+end
+
+_G.send_string_to_terminal = function(str)
+    _G.open_or_switch_to_terminal() -- Ensure a terminal is open
+    local term_buf = vim.api.nvim_get_current_buf()
+    vim.api.nvim_chan_send(vim.bo[term_buf].channel, str .. "\r")
+end
+
+_G.input_and_send_to_terminal = function()
+    local input_str = vim.fn.input('cmd: ')
+    _G.send_string_to_terminal(input_str)
+end
+
+vim.keymap.set('n', '<C-t>', '<cmd>lua _G.open_or_switch_to_terminal()<CR>') -- switch to terminal
+vim.keymap.set('n', '<leader>tt', '<cmd>lua _G.input_and_send_to_terminal()<CR>') -- send command to terminal
+-- keymap.set("n", "<C-t>", ":vsp | terminal<CR> | i") -- switch to terminal in vertical split
