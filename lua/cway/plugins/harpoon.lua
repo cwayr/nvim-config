@@ -5,7 +5,7 @@ return {
     },
     config = function()
         -- set keymaps
-        local keymap = vim.keymap 
+        local keymap = vim.keymap
         local harpoon = require("harpoon.ui")
 
         keymap.set("n", "<leader>hm", "<cmd>lua require('harpoon.mark').add_file()<cr>", { desc = "Mark file with harpoon" })

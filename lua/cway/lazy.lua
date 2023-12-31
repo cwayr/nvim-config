@@ -15,7 +15,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({ { import = "cway.plugins" }, { import = "cway.plugins.lsp" } }, {
   install = {
-    colorscheme = { "nightfly" },
+    colorscheme = { "nordic" },
   },
   checker = {
     enabled = true,
