@@ -20,7 +20,7 @@ opt.ignorecase = true -- ignore case when searching
 opt.smartcase = true -- if you include mixed case in your search, assumes you want case-sensitive
 
 -- cursor line
-opt.cursorline = true -- highlight the current cursor line
+opt.cursorline = false -- highlight the current cursor line
 
 -- appearance
 opt.termguicolors = true -- enables colorscheme to use gui colors
@@ -30,12 +30,28 @@ opt.signcolumn = "yes" -- show sign column so that text doesn't shift
 -- backspace
 opt.backspace = "indent,eol,start" -- allow backspace on indent, end of line or insert mode start position
 
--- clipboard
-opt.clipboard:append("unnamedplus") -- use system clipboard as default register
-
 -- split windows
 opt.splitright = true -- split vertical window to the right
 opt.splitbelow = true -- split horizontal window to the bottom
 
+-- autosave
+vim.cmd [[
+    augroup autosave
+        autocmd!
+        autocmd FocusLost * silent! wall
+    augroup END
+]]
+
 -- turn off swapfile
 opt.swapfile = false
+
+-- clipboard
+opt.clipboard = "unnamedplus"
+if vim.fn.has('wsl') == 1 then
+    vim.api.nvim_create_autocmd('TextYankPost', {
+        group = vim.api.nvim_create_augroup('Yank', { clear = true }),
+        callback = function()
+            vim.fn.system('clip.exe', vim.fn.getreg('"'))
+        end,
+    })
+end
